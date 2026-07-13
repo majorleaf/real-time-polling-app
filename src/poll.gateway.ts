@@ -2,6 +2,7 @@ import {
   WebSocketGateway,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  SubscribeMessage,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 
@@ -17,5 +18,18 @@ export class PollGateway implements OnGatewayConnection, OnGatewayDisconnect {
   // This triggers automatically when a client closes their app/terminal
   handleDisconnect(client: Socket) {
     console.log(`\n[Server] 🔴 A client disconnected! ID: ${client.id}`);
+  }
+
+  // @SubscribeMessage tells Nest to listen for this exact event name
+  @SubscribeMessage('GET_POLL_STATUS')
+  handleGetPollStatus(client: Socket) {
+    console.log(
+      `\n[Server] Received GET_POLL_STATUS request from ${client.id}`,
+    );
+
+    //automatic response data
+    const currentPoll = { NestJS: 5, Express: 2, Fastify: 1 };
+
+    client.emit('POLL_UPDATE', currentPoll);
   }
 }
