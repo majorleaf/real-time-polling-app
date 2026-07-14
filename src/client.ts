@@ -9,6 +9,9 @@ console.log('Attempting to connect to server...');
 socket.on('connect', () => {
   console.log('\n Success! connected to the server.');
   console.log(`My unique Voter ID is: ${socket.id}\n`);
+
+  console.log('Sending pre-defined request: GET_POLL_STATUS...');
+  socket.emit('GET_POLL_STATUS');
 });
 
 socket.on('disconnect', () => {
