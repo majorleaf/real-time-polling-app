@@ -14,6 +14,13 @@ socket.on('connect', () => {
   socket.emit('GET_POLL_STATUS');
 });
 
+//NB:completely non-blocking
+//It just wait patiently in the backgroundw until the sever replies
+socket.on('POLL_UPDATE', (data) => {
+  console.log('\n Automatic response received from server:');
+  console.log(data);
+});
+
 socket.on('disconnect', () => {
   console.log('Disconnected from server.');
 });
