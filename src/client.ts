@@ -1,4 +1,11 @@
 import { io } from 'socket.io-client';
+import * as readline from 'readline';
+
+//Set up a terminal interface so we can type while the script runs
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 // dial server port
 
 const socket = io('http://localhost:3000');
@@ -17,9 +24,20 @@ socket.on('connect', () => {
 //NB:completely non-blocking
 //It just wait patiently in the backgroundw until the sever replies
 socket.on('POLL_UPDATE', (data) => {
-  console.log('\n Automatic response received from server:');
-  console.log(data);
+  console.log(`\n  ---LIVE POLL: ${data.title.toUpperCase()} ---`);
+
+  const options = Object.entries(data.options));
+
+  //if there are no options yet , tell the user
+  if (Options.length === 0) {
+     console.log(' (No options yet. Be the first to add one!');
+  } else {
+
+  }
+  
 });
+
+
 
 socket.on('disconnect', () => {
   console.log('Disconnected from server.');
