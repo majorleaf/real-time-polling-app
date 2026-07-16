@@ -86,8 +86,36 @@
     function togglePage(pageId) {
         if(pageId === 'create-page') {
             votePage.classList.add('hidden');
+            createPage.classList.list.remove('hidden');
         }
     }
+
+    function submitNewPoll() {
+        const titleInput = document.getElementById('new-poll-title');
+        const optionsInput = document.getElementById('neww-poll-options');
+        const title = titleInput.value.trim();
+
+        // 
+        if (!title) {
+            titleInput.classList.add('border-red-500');
+            document.getElementById('title-error').classList.remove('hidden');
+            return;
+        }
+
+        //Parse the comma-separated options into an array
+        const options = optionsInput.value.split(',').map(opt => opt.trim()).filter(opt => opt.length > 0);
+
+        //Send the events to the NESTJS server
+        socket.emit('CREATE_POLL', title);
+        options.forEach(opt => socket.emit('ADD_OPTION', opt));
+
+        // clear inputs and navigate back to the voting server
+        titleInput.value ='';
+        optionsInput.value = '';
+        togglePage('vote-page');
+    }
+
+    
  </script>   ">
     
 </body>
