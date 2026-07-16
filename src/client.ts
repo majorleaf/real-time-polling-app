@@ -21,9 +21,15 @@ socket.on('connect', () => {
   socket.emit('GET_POLL_STATUS');
 });
 
+interface PollData {
+  title: string;
+  options: Record<string, number>;
+}
+
 //NB:completely non-blocking
 //It just wait patiently in the backgroundw until the sever replies
-socket.on('POLL_UPDATE', (data) => {
+socket.on('POLL_UPDATE', (rawData: unknown) => {
+  const data = rawData as PollData;
   //data now contains titles and options
   console.log(`\n  --- LIVE POLL: ${data.title.toUpperCase()} ---`);
 
