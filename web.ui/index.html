@@ -44,7 +44,51 @@
                 <button onclick="submitNewOption()" class="bg-slate-700 hover:bg-slate-600 text-white px-5 py-2.5 rounded-xl text-sm transition-colors font-medium shadow">Add</button>
             </div>
         </div>
-    </div>">
+    </div>
+    <div id="create-page" class="max-w-xl w-full bg-slate-800 rounded-3xl shadow-2xl border border-slate-700 overflow-hidden hidden transition-all">
+        <div class="bg-slate-900/50 p-6 border-b border-slate-700">
+            <h2 class="text-2xl font-bold text-white">Create a New Poll</h2>
+            <p class="text-slate-400 text-sm mt-1">This will instantly replace the active poll for all connected users.</p>
+        </div>
+        
+        <div class="p-6 space-y-5">
+            <!-- Poll Title Input -->
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1.5">Poll Topic</label>
+                <input type="text" id="new-poll-title" placeholder="e.g., Best Programming Language" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+                <p id="title-error" class="text-red-400 text-xs mt-1.5 hidden">Please enter a poll topic.</p>
+            </div>
+
+            <!-- Poll Options Input -->
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1.5">Initial Options <span class="text-slate-500">(Comma separated)</span></label>
+                <input type="text" id="new-poll-options" placeholder="e.g., Python, JavaScript, Rust" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex justify-end gap-3 pt-2">
+                <button onclick="togglePage('vote-page')" class="px-5 py-2.5 rounded-xl text-slate-300 hover:bg-slate-700 transition-colors font-medium">Cancel</button>
+                <button onclick="submitNewPoll()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl shadow-lg transition-colors font-medium">Launch Poll</button>
+            </div>
+        </div>
+    </div>
+ 
+ <script>
+    const socket = io('https://localhost:3000');
+
+    // UI Elements
+    const titleEl = document.getElementById('poll-title');
+    const container = document.getElementById('options-container');
+    const statusDot = document.getElementById('status-dot');
+    const statusText = document.getElementById('create-page');
+
+    // Toggles visibilty btw the two " pages"
+    function togglePage(pageId) {
+        if(pageId === 'create-page') {
+            votePage.classList.add('hidden');
+        }
+    }
+ </script>   ">
     
 </body>
 </html>
