@@ -115,7 +115,27 @@
         togglePage('vote-page');
     }
 
-    
+    function submitNewOption() {
+            const input = document.getElementById('quick-add-input');
+            const val = input.value.trim();
+            if (val) {
+                socket.emit('ADD_OPTION', val);
+                input.value = ''; // clear input after submitting
+            }
+        }
+
+        socket.on('connect', () => {
+            statusDot.classList.replace('bg-red-500', 'bg-green-500');
+            statusText.innerText = 'Live';
+            socket.emit('GET_POLL_STATUS'); // Ask for data immediately
+        });
+
+        socket.on('disconnect', () => {
+            statusDot.classList.replace('bg-green-500', 'bg-red-500');
+            statusText.innerText = 'Offline';
+            titleEl.innerText = 'Disconnected';
+        });
+        
  </script>   ">
     
 </body>
