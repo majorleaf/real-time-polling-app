@@ -74,7 +74,7 @@
     </div>
  
  <script>
-    const socket = io('https://localhost:3000');
+    const socket = io('https://real-time-polling-app-h8f3.onrender.com/');
 
     // UI Elements
     const titleEl = document.getElementById('poll-title');
@@ -114,8 +114,32 @@
         optionsInput.value = '';
         togglePage('vote-page');
     }
+    function submitNewPoll() {
+            const titleInput = document.getElementById('new-poll-title');
+            const optionsInput = document.getElementById('new-poll-options');
+            const title = titleInput.value.trim();
+            
+            // Custom UI validation (Instead of using an ugly browser alert)
+            if (!title) {
+                titleInput.classList.add('border-red-500');
+                document.getElementById('title-error').classList.remove('hidden');
+                return;
+            }
 
-    function submitNewOption() {
+            // Parse the comma-separated options into an array
+            const options = optionsInput.value.split(',').map(opt => opt.trim()).filter(opt => opt.length > 0);
+
+            // Send the events to the NestJS Server
+            socket.emit('CREATE_POLL', title);
+            options.forEach(opt => socket.emit('ADD_OPTION', opt));
+
+            // Clear inputs and navigate back to the voting page
+            titleInput.value = '';
+            optionsInput.value = '';
+            togglePage('vote-page');
+        }
+
+        function submitNewOption() {
             const input = document.getElementById('quick-add-input');
             const val = input.value.trim();
             if (val) {
@@ -133,24 +157,13 @@
         socket.on('disconnect', () => {
             statusDot.classList.replace('bg-green-500', 'bg-red-500');
             statusText.innerText = 'Offline';
-            titleEl.innerText = 'Disconnected';
-        });
-        
-        socket.on('POLL_UPDATE', (data) => {
-            titleEl.innerText = data.title;
-            container.innerHTML = '';
-
-        });
-         const optionsArray = Object.entries(data.options);
-            const totalVotes = optionsArray.reduce((sum, [, votes]) => sum + votes, 0);
-
             if (optionsArray.length === 0) {
                 container.innerHTML = '<p class="text-center text-slate-500 py-4">No options yet. Add one below to start the poll!</p>';
                 return;
             }
 
             optionsArray.forEach(([option, votes]) => {
-                const percentage = totalVotes === 0 ? 0 : Math.round((votes / totalVotes) * 100);
+            const percentage = totalVotes === 0 ? 0 : Math.round((votes / totalVotes) * 100);
                 
                 // Create a clickable button for each option
                 const btn = document.createElement('div');
@@ -176,10 +189,8 @@
                 btn.appendChild(bar);
                 btn.appendChild(content);
                 container.appendChild(btn);
-         
-         
             });
-        }    
+        });
  </script>
     
 </body>
