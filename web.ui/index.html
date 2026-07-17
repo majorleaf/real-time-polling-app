@@ -136,7 +136,51 @@
             titleEl.innerText = 'Disconnected';
         });
         
- </script>   ">
+        socket.on('POLL_UPDATE', (data) => {
+            titleEl.innerText = data.title;
+            container.innerHTML = '';
+
+        });
+         const optionsArray = Object.entries(data.options);
+            const totalVotes = optionsArray.reduce((sum, [, votes]) => sum + votes, 0);
+
+            if (optionsArray.length === 0) {
+                container.innerHTML = '<p class="text-center text-slate-500 py-4">No options yet. Add one below to start the poll!</p>';
+                return;
+            }
+
+            optionsArray.forEach(([option, votes]) => {
+                const percentage = totalVotes === 0 ? 0 : Math.round((votes / totalVotes) * 100);
+                
+                // Create a clickable button for each option
+                const btn = document.createElement('div');
+                btn.className = "relative bg-slate-900 rounded-xl p-4 cursor-pointer hover:bg-slate-700 border border-slate-700 transition-colors group overflow-hidden shadow-sm";
+                btn.onclick = () => socket.emit('VOTE', option);
+
+                // The background progress bar
+                const bar = document.createElement('div');
+                bar.className = `absolute top-0 left-0 h-full bg-blue-600/30 bar-transition`;
+                bar.style.width = `${percentage}%`;
+
+                // The text content
+                const content = document.createElement('div');
+                content.className = "relative z-10 flex justify-between items-center";
+                content.innerHTML = `
+                    <span class="font-semibold text-white text-lg">${option}</span>
+                    <div class="text-right">
+                        <div class="font-bold text-white text-xl">${percentage}%</div>
+                        <div class="text-xs text-slate-400">${votes} votes</div>
+                    </div>
+                `;
+
+                btn.appendChild(bar);
+                btn.appendChild(content);
+                container.appendChild(btn);
+         
+         
+            });
+        }    
+ </script>
     
 </body>
 </html>
