@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Poll Dashboard</title>
+    <!-- Import Tailwind for beautiful styling without external CSS files -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Import the browser version of Socket.io -->
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif;}
+        body { font-family: 'Inter', sans-serif; }
         .bar-transition { transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
@@ -45,6 +47,7 @@
             </div>
         </div>
     </div>
+
     <div id="create-page" class="max-w-xl w-full bg-slate-800 rounded-3xl shadow-2xl border border-slate-700 overflow-hidden hidden transition-all">
         <div class="bg-slate-900/50 p-6 border-b border-slate-700">
             <h2 class="text-2xl font-bold text-white">Create a New Poll</h2>
@@ -72,54 +75,42 @@
             </div>
         </div>
     </div>
- 
- <script>
-    const socket = io('https://real-time-polling-app-h8f3.onrender.com/');
 
-    // UI Elements
-    const titleEl = document.getElementById('poll-title');
-    const container = document.getElementById('options-container');
-    const statusDot = document.getElementById('status-dot');
-    const statusText = document.getElementById('create-page');
+    <script>
+        const socket = io('http://localhost:3000');
 
-    // Toggles visibilty btw the two " pages"
-    function togglePage(pageId) {
-        if(pageId === 'create-page') {
-            votePage.classList.add('hidden');
-            createPage.classList.list.remove('hidden');
+        // UI Elements
+        const titleEl = document.getElementById('poll-title');
+        const container = document.getElementById('options-container');
+        const statusDot = document.getElementById('status-dot');
+        const statusText = document.getElementById('status-text');
+
+        // Page Containers
+        const votePage = document.getElementById('vote-page');
+        const createPage = document.getElementById('create-page');
+
+        // Toggles visibility between the two "pages"
+        function togglePage(pageId) {
+            if (pageId === 'create-page') {
+                votePage.classList.add('hidden');
+                createPage.classList.remove('hidden');
+                
+                // Focus the input and clear any old errors
+                document.getElementById('new-poll-title').focus();
+                document.getElementById('title-error').classList.add('hidden');
+                document.getElementById('new-poll-title').classList.remove('border-red-500');
+            } else {
+                createPage.classList.add('hidden');
+                votePage.classList.remove('hidden');
+            }
         }
-    }
 
-    function submitNewPoll() {
-        const titleInput = document.getElementById('new-poll-title');
-        const optionsInput = document.getElementById('neww-poll-options');
-        const title = titleInput.value.trim();
-
-        // 
-        if (!title) {
-            titleInput.classList.add('border-red-500');
-            document.getElementById('title-error').classList.remove('hidden');
-            return;
-        }
-
-        //Parse the comma-separated options into an array
-        const options = optionsInput.value.split(',').map(opt => opt.trim()).filter(opt => opt.length > 0);
-
-        //Send the events to the NESTJS server
-        socket.emit('CREATE_POLL', title);
-        options.forEach(opt => socket.emit('ADD_OPTION', opt));
-
-        // clear inputs and navigate back to the voting server
-        titleInput.value ='';
-        optionsInput.value = '';
-        togglePage('vote-page');
-    }
-    function submitNewPoll() {
+        function submitNewPoll() {
             const titleInput = document.getElementById('new-poll-title');
             const optionsInput = document.getElementById('new-poll-options');
             const title = titleInput.value.trim();
             
-            // Custom UI validation (Instead of using an ugly browser alert)
+            // Custom UI validation
             if (!title) {
                 titleInput.classList.add('border-red-500');
                 document.getElementById('title-error').classList.remove('hidden');
@@ -157,13 +148,23 @@
         socket.on('disconnect', () => {
             statusDot.classList.replace('bg-green-500', 'bg-red-500');
             statusText.innerText = 'Offline';
+            titleEl.innerText = 'Disconnected';
+        });
+
+        socket.on('POLL_UPDATE', (data) => {
+            titleEl.innerText = data.title;
+            container.innerHTML = ''; 
+
+            const optionsArray = Object.entries(data.options);
+            const totalVotes = optionsArray.reduce((sum, [, votes]) => sum + votes, 0);
+            
             if (optionsArray.length === 0) {
                 container.innerHTML = '<p class="text-center text-slate-500 py-4">No options yet. Add one below to start the poll!</p>';
                 return;
             }
 
             optionsArray.forEach(([option, votes]) => {
-            const percentage = totalVotes === 0 ? 0 : Math.round((votes / totalVotes) * 100);
+                const percentage = totalVotes === 0 ? 0 : Math.round((votes / totalVotes) * 100);
                 
                 // Create a clickable button for each option
                 const btn = document.createElement('div');
@@ -191,7 +192,6 @@
                 container.appendChild(btn);
             });
         });
- </script>
-    
+    </script>
 </body>
 </html>
