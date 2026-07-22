@@ -1,3 +1,65 @@
+📊 Real-Time WebSocket Polling App
+
+A lightning-fast, real-time polling application built with NestJS, Socket.io, and Tailwind CSS.
+
+This project demonstrates an event-driven architecture where multiple clients can connect, vote, and see results update instantly across all screens without refreshing the page.
+
+🚀 Live Demo
+
+Frontend (Vercel): [Insert your Vercel link here]
+
+Backend (Render): [Insert your Render link here]
+
+✨ Features
+
+Real-Time Syncing: Votes, new options, and new polls are broadcasted instantly to all connected users via WebSockets.
+
+Single Shared State: Everyone voting sees the exact same poll at the same time.
+
+Modern UI: Built with vanilla HTML and Tailwind CSS for a beautiful, responsive, mobile-first design.
+
+In-Memory Data: Uses NestJS services to maintain poll state continuously.
+
+💻 Project Setup
+
+Clone the repository:
+
+git clone <your-repo-url>
+cd realtime-poll
+
+
+Install dependencies:
+
+npm install
+
+
+🏃 Running the Application
+
+1. Start the Backend (NestJS)
+
+# development
+npm run start
+
+# watch mode (recommended for local dev)
+npm run start:dev
+
+
+The WebSocket server will start listening on http://localhost:3000.
+
+2. Start the Frontend (Web UI)
+
+Open the web-ui/index.html file in your code editor.
+
+Use a tool like Live Server (VS Code extension) to serve the file, or simply open it directly in your web browser.
+
+Ensure the socket connection URL inside index.html points to your backend (http://localhost:3000 for local testing).
+
+☁️ Deployment
+
+Backend: Deployed on Render as a Web Service running npm run start:prod.
+
+Frontend: Deployed on Vercel by setting the Root Directory to web-ui and overriding the build command to be blank.
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
