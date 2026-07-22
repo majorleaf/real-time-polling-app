@@ -35,7 +35,7 @@ export class PollGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('VOTE')
   handleVote(@MessageBody() option: string, @ConnectedSocket() client: Socket) {
-    const result = this.pollService.vote(option);
+    const result = this.pollService.vote(option, client.id);
 
     if (result.success) {
       this.server.emit('POLL_UPDATE', result.poll);
