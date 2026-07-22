@@ -44,12 +44,6 @@ export class PollGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  @SubscribeMessage('ADD_OPTION')
-  handleAddOption(@MessageBody() option: string) {
-    const updatedPoll = this.pollService.addOption(option);
-    this.server.emit('POLL_UPDATE', updatedPoll);
-  }
-
   @SubscribeMessage('CREATE_POLL')
   handleCreatePoll(@MessageBody() newTitle: string) {
     const newPoll = this.pollService.createPoll(newTitle);
